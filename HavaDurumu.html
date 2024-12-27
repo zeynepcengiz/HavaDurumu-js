@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hava Durumu</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #74ebd5, #acb6e5);
+            color: #333;
+        }
+        header {
+            background: #3a6186;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            margin: 50px auto;
+            max-width: 700px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .content {
+            padding: 30px;
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: calc(100% - 30px);
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #3a6186;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+        }
+        button:hover {
+            background: #2d4873;
+        }
+        .weather-info {
+            margin-top: 20px;
+        }
+        .weather-info h2 {
+            margin: 20px 0 10px;
+            font-size: 22px;
+        }
+        .weather-info p {
+            margin: 5px 0;
+            font-size: 18px;
+            color: #555;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #fff;
+            background: #3a6186;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        🌦 Hava Durumu Uygulaması
+    </header>
+    <div class="container">
+        <div class="content">
+            <p>Şehrinizin güncel hava durumunu öğrenmek için şehir adını yazın ve butona tıklayın:</p>
+            <input type="text" id="cityInput" placeholder="Şehir adı...">
+            <button id="fetchWeather">Hava Durumunu Görüntüle</button>
+            <div id="weatherContainer" class="weather-info"></div>
+        </div>
+    </div>
+    <footer>
+        Hava Durumu © 2024 - Tüm Hakları Saklıdır
+    </footer>
+
+    <script>
+        document.getElementById('fetchWeather').addEventListener('click', function () {
+            const city = document.getElementById('cityInput').value.trim();
+            if (!city) {
+                alert('Lütfen bir şehir adı girin.');
+                return;
+            }
+
+            const apiKey = 'ce8f8a16a093785082dcd055dd4b0770'; 
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=tr&appid=${apiKey}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP Hatası! Durum Kodu: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const weatherContainer = document.getElementById('weatherContainer');
+                    weatherContainer.innerHTML = '';
+
+                    const weatherCity = document.createElement('h2');
+                    weatherCity.textContent = `${data.name}, ${data.sys.country}`;
+
+                    const weatherDescription = document.createElement('p');
+                    weatherDescription.textContent = `Durum: ${data.weather[0].description}`;
+
+                    const weatherTemperature = document.createElement('p');
+                    weatherTemperature.textContent = `Sıcaklık: ${data.main.temp}°C`;
+
+                    const weatherHumidity = document.createElement('p');
+                    weatherHumidity.textContent = `Nem: ${data.main.humidity}%`;
+
+                    weatherContainer.appendChild(weatherCity);
+                    weatherContainer.appendChild(weatherDescription);
+                    weatherContainer.appendChild(weatherTemperature);
+                    weatherContainer.appendChild(weatherHumidity);
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert('Bir hata oluştu: ' + error.message);
+                });
+        });
+    </script>
+</body>
+</html>
